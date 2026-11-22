@@ -53,19 +53,21 @@ const themeBtn = () => `<button class="icon-btn" data-act="theme" aria-label="${
 
 const NAV = [['campus', 'home', 'nav_home'], ['psico', 'brain', 'nav_psico'], ['tests', 'book', 'nav_tests'], ['sim', 'timer', 'nav_sim'], ['temari', 'layers', 'nav_temari'], ['fisic', 'dumbbell', 'nav_fisic'], ['hist', 'history', 'nav_hist'], ['perfil', 'user', 'nav_profile']];
 const NAV_DOC = ['docent', 'users', 'nav_docent'];
+const NAV_ADMIN = ['admin', 'shield', 'nav_admin'];
 
 function shell(active, html) {
   const u = store.me(); const rk = store.rankOf(u.xp); const doc = store.isDocent();
   const map = { tema: 'temari', result: 'tests' };
   const act = map[active] || active;
-  const nav = doc ? [NAV_DOC, ...NAV] : NAV;
-  const mob = doc ? ['docent', 'campus', 'psico', 'fisic', 'perfil'] : ['campus', 'psico', 'tests', 'fisic', 'perfil'];
+  const adm = store.isAdmin();
+  const nav = adm ? [NAV_ADMIN, NAV_DOC, ...NAV] : doc ? [NAV_DOC, ...NAV] : NAV;
+  const mob = adm ? ['admin', 'docent', 'campus', 'psico', 'perfil'] : doc ? ['docent', 'campus', 'psico', 'fisic', 'perfil'] : ['campus', 'psico', 'tests', 'fisic', 'perfil'];
   return `<div class="layout">
     <aside class="side">
       ${brand()}
       <nav>${nav.map(([k, ic, lab]) => `<a href="#/${k}" class="${act === k ? 'on' : ''}">${icon(ic)}<span>${t(lab)}</span></a>`).join('')}</nav>
       <div class="side-foot">
-        <div class="me"><div class="avatar">${esc(u.profile.name[0] || '?')}</div><div><b>${esc(u.profile.name)}</b><small>${doc ? t('role_docent') : `${rk.name} · ${u.xp} XP`}</small></div></div>
+        <div class="me"><div class="avatar">${esc(u.profile.name[0] || '?')}</div><div><b>${esc(u.profile.name)}</b><small>${adm ? t('role_admin') : doc ? t('role_docent') : `${rk.name} · ${u.xp} XP`}</small></div></div>
         <button class="btn ghost sm" data-act="logout">${icon('logout', 16)} ${t('logout')}</button>
         <small class="credit">${t('credit')}</small>
       </div>
@@ -620,6 +622,54 @@ function docCsv() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sentinella-alumnes-${dayKey()}.csv`; a.click(); URL.revokeObjectURL(a.href);
 }
 
+// ═════════ SUPER ADMIN ═════════
+function adminView() {
+  if (!store.isAdmin()) return campus();
+  const cloudMode = store.me().profile.src === 'cloud';
+  return { html: `${pageHead(t('adm_t'), t('adm_s'), `<span class="chip">${icon(cloudMode ? 'cloud' : 'lock', 14)} ${cloudMode ? t('doc_cloud') : t('doc_local')}</span>`)}
+    <div id="admbox"><div class="card"><p class="empty">…</p></div></div>
+    <div class="grid-2">
+      ${cloudMode ? `<div class="card"><h3>${t('adm_create')}</h3><p class="muted">${t('adm_cloud_note')}</p></div>` : `<div class="card"><h3>${icon('plus', 18)} ${t('adm_create')}</h3><p class="muted small">${t('adm_create_d')}</p>
+        <form id="newu" class="form" novalidate><label>${t('name')}<input name="name" required></label><label>${t('email')}<input name="email" type="email" required></label>
+        <div class="grid2"><label>${t('password')}<input name="password" type="password" minlength="6" autocomplete="new-password" required></label><label>${t('adm_role')}<select name="role">${store.ROLES.map((r) => `<option value="${r}">${t('role_' + r)}</option>`).join('')}</select></label></div>
+        <p class="err" id="nerr"></p><button class="btn primary">${icon('plus', 16)} ${t('adm_create')}</button></form></div>`}
+      <div class="card">${cloudMode ? '' : `<h3>${icon('lock', 18)} ${t('adm_pw')}</h3>
+        <form id="apw" class="form" novalidate><label>${t('adm_pw_old')}<input name="old" type="password" autocomplete="current-password"></label><label>${t('adm_pw_new')}<input name="nw" type="password" minlength="6" autocomplete="new-password"></label><p class="err" id="perr"></p><button class="btn glass">${t('save')}</button></form>`}
+        <h3>${icon('trash', 18)} ${t('adm_del_demo')}</h3><p class="muted small">${t('adm_del_demo_d')}</p><button class="btn danger" data-act="adm-del-demo">${t('adm_del_demo')}</button></div>
+    </div>`,
+  mount() {
+    let alive = true;
+    const load = () => store.listUsers().then((u) => { if (alive) drawAdmin(u); }).catch((e) => { $('#admbox').innerHTML = `<div class="card"><p class="err">${esc(e.message || e)}</p></div>`; });
+    load(); ADMIN_RELOAD = load;
+    $('#newu')?.addEventListener('submit', async (e) => {
+      e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const err = $('#nerr');
+      if (!f.name || !f.email || !f.password) return (err.textContent = t('err_fill'));
+      if (f.password.length < 6) return (err.textContent = t('err_pw'));
+      try { await store.createLocalUser(f); e.target.reset(); err.textContent = ''; toast(t('adm_created')); load(); } catch (x) { err.textContent = x.message === 'taken' ? t('err_taken') : x.message; }
+    });
+    $('#apw')?.addEventListener('submit', async (e) => {
+      e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const err = $('#perr');
+      if (!f.nw || f.nw.length < 6) return (err.textContent = t('err_pw'));
+      try { await store.changeAdminPassword(f.old, f.nw); e.target.reset(); err.textContent = ''; toast(t('adm_pw_ok')); } catch { err.textContent = t('err_login'); }
+    });
+    return () => { alive = false; ADMIN_RELOAD = null; };
+  } };
+}
+let ADMIN_RELOAD = null;
+function drawAdmin(users) {
+  const box = $('#admbox'); if (!box) return;
+  const by = (r) => users.filter((u) => u.role === r).length;
+  const meId = store.me().profile.id;
+  box.innerHTML = `<div class="kpis"><div class="kpi"><small>${t('adm_users')}</small><b>${users.length}</b></div><div class="kpi"><small>${t('role_alumne')}</small><b>${by('alumne')}</b></div><div class="kpi"><small>${t('role_docent')}</small><b>${by('docent')}</b></div><div class="kpi"><small>${t('role_admin')}</small><b>${by('admin')}</b></div></div>
+    <div class="card"><div class="table-wrap"><table class="dtable"><thead><tr><th>${t('name')}</th><th>${t('adm_role')}</th><th>${t('doc_last')}</th><th>${t('tests_done')}</th><th></th></tr></thead><tbody>
+    ${users.map((u) => { const locked = u.protected || u.id === meId; return `<tr><td><div class="who"><span class="avatar sm">${esc((u.name || u.email || '?')[0])}</span><div><b>${esc(u.name || '—')}${u.demo ? ' <span class="chip">demo</span>' : ''}</b><small>${esc(u.email || '')}</small></div></div></td>
+      <td><select data-role="${esc(u.id)}" ${locked ? 'disabled' : ''}>${store.ROLES.map((r) => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${t('role_' + r)}</option>`).join('')}</select></td>
+      <td>${relDay(u.last ? Math.floor((Date.now() - u.last) / 864e5) : null)}</td><td>${u.tests ?? '–'}</td>
+      <td>${locked ? `<span class="chip">${icon('lock', 12)} ${t('adm_protected')}</span>` : `<button class="icon-btn sm" data-act="adm-del" data-id="${esc(u.id)}" aria-label="${t('del')}">${icon('trash', 16)}</button>`}</td></tr>`; }).join('')}
+    </tbody></table></div></div>`;
+  $$('[data-role]', box).forEach((s) => s.addEventListener('change', async () => { try { await store.setRole(s.dataset.role, s.value); toast(t('profile_saved')); ADMIN_RELOAD?.(); } catch (e) { toast(e.message || 'Error', 'err'); } }));
+}
+
 function perfil() {
   const d = store.me(); const p = d.profile; const rk = store.rankOf(d.xp);
   return { html: `${pageHead(t('prof_t'), '')}
@@ -643,7 +693,7 @@ function perfil() {
   } };
 }
 
-const VIEWS = { docent, '': landing, login: () => authView('login'), register: () => authView('register'), campus, psico, tests, sim, run: runView, result: resultView, temari, tema, fisic, hist, perfil };
+const VIEWS = { admin: adminView, docent, '': landing, login: () => authView('login'), register: () => authView('register'), campus, psico, tests, sim, run: runView, result: resultView, temari, tema, fisic, hist, perfil };
 
 // ───────── Accions (delegació d'esdeveniments) ─────────
 const ACT = {
@@ -651,6 +701,8 @@ const ACT = {
   theme: toggleTheme,
   logout: async () => { await store.logout(); go('#/'); },
   'doc-csv': docCsv,
+  'adm-del': async (el) => { if (confirm(t('confirm_del'))) { await store.removeUser(el.dataset.id); toast('✓'); ADMIN_RELOAD?.(); } },
+  'adm-del-demo': async () => { if (!confirm(t('confirm_del'))) return; const us = await store.listUsers(); for (const u of us) if (u.demo) await store.removeUser(u.id); toast('✓'); ADMIN_RELOAD?.(); },
   'demo-doc': async () => { await store.demoDocent(); toast(t('welcome', { name: t('role_docent') })); go('#/docent'); },
   demo: async () => { await store.demo(); toast(t('welcome', { name: 'Laia' })); go('#/campus'); },
   'psico-cfg': (el) => psicoCfg(el.dataset.cat),

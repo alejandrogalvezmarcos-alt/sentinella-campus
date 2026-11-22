@@ -29,4 +29,8 @@ Para activar cuentas en la nube (el progreso sigue al alumno en cualquier dispos
 1. Crea un proyecto gratuito en [supabase.com](https://supabase.com).
 2. En *SQL Editor*, ejecuta [`supabase/schema.sql`](supabase/schema.sql) (tablas, permisos y alta automática de perfiles).
 3. En *Project Settings → API*, copia la *Project URL* y la clave *anon public* en [`js/config.js`](js/config.js).
-4. Para dar acceso de profesorado: `update public.profiles set role = 'docent' where email = '...';`
+4. Regístrate en la app con tu correo y hazte super admin: `update public.profiles set role = 'admin' where email = '...';`. Desde la pantalla *Administració* podrás dar rol de docente a quien quieras.
+
+### Super admin local
+
+En modo local existe una cuenta de super admin (usuario `admin`) en cada dispositivo. En el código solo está el *hash* de la contraseña. Desde *Administració* se puede cambiar la contraseña en ese dispositivo, crear usuarios, cambiar roles y borrar los datos de demostración.

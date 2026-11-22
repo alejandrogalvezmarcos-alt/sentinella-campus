@@ -608,3 +608,4 @@ button.hrow { border-bottom: 1px solid var(--line); }
 .sheet h3 { margin-top: 1.2rem; text-transform: uppercase; }
 .sheet { width: min(620px, 100%); }
 .side .brand small em { display: none; }
+.dtable select { width: auto; padding: .4em .6em; font-size: .85rem; }
