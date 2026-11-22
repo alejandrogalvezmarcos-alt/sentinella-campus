@@ -52,19 +52,22 @@ const langSwitch = () => `<div class="seg langs">${LANGS.map(([k]) => `<button d
 const themeBtn = () => `<button class="icon-btn" data-act="theme" aria-label="${t('theme')}">${icon(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>`;
 
 const NAV = [['campus', 'home', 'nav_home'], ['psico', 'brain', 'nav_psico'], ['tests', 'book', 'nav_tests'], ['sim', 'timer', 'nav_sim'], ['temari', 'layers', 'nav_temari'], ['fisic', 'dumbbell', 'nav_fisic'], ['hist', 'history', 'nav_hist'], ['perfil', 'user', 'nav_profile']];
-const MOBILE_NAV = ['campus', 'psico', 'tests', 'fisic', 'perfil'];
+const NAV_DOC = ['docent', 'users', 'nav_docent'];
 
 function shell(active, html) {
-  const u = store.me(); const rk = store.rankOf(u.xp);
+  const u = store.me(); const rk = store.rankOf(u.xp); const doc = store.isDocent();
   const map = { tema: 'temari', result: 'tests' };
   const act = map[active] || active;
+  const nav = doc ? [NAV_DOC, ...NAV] : NAV;
+  const mob = doc ? ['docent', 'campus', 'psico', 'fisic', 'perfil'] : ['campus', 'psico', 'tests', 'fisic', 'perfil'];
   return `<div class="layout">
     <aside class="side">
       ${brand()}
-      <nav>${NAV.map(([k, ic, lab]) => `<a href="#/${k}" class="${act === k ? 'on' : ''}">${icon(ic)}<span>${t(lab)}</span></a>`).join('')}</nav>
+      <nav>${nav.map(([k, ic, lab]) => `<a href="#/${k}" class="${act === k ? 'on' : ''}">${icon(ic)}<span>${t(lab)}</span></a>`).join('')}</nav>
       <div class="side-foot">
-        <div class="me"><div class="avatar">${esc(u.profile.name[0] || '?')}</div><div><b>${esc(u.profile.name)}</b><small>${rk.name} · ${u.xp} XP</small></div></div>
+        <div class="me"><div class="avatar">${esc(u.profile.name[0] || '?')}</div><div><b>${esc(u.profile.name)}</b><small>${doc ? t('role_docent') : `${rk.name} · ${u.xp} XP`}</small></div></div>
         <button class="btn ghost sm" data-act="logout">${icon('logout', 16)} ${t('logout')}</button>
+        <small class="credit">${t('credit')}</small>
       </div>
     </aside>
     <div class="main">
@@ -74,7 +77,7 @@ function shell(active, html) {
       </header>
       <main class="content">${html}</main>
     </div>
-    <nav class="tabbar">${MOBILE_NAV.map((k) => { const n = NAV.find((x) => x[0] === k); return `<a href="#/${k}" class="${act === k ? 'on' : ''}">${icon(n[1], 22)}<span>${t(k === 'fisic' ? 'nav_fis_short' : n[2])}</span></a>`; }).join('')}</nav>
+    <nav class="tabbar">${mob.map((k) => { const n = nav.find((x) => x[0] === k); return `<a href="#/${k}" class="${act === k ? 'on' : ''}">${icon(n[1], 22)}<span>${t(k === 'fisic' ? 'nav_fis_short' : n[2])}</span></a>`; }).join('')}</nav>
   </div>`;
 }
 const pageHead = (title, sub, extra = '') => `<div class="page-head"><div><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${extra}</div>`;
@@ -91,7 +94,7 @@ function modal(html, onMount) {
 }
 
 // ───────── Equip docent ─────────
-const TEAM = [{ name: 'Carmen', role: ['Equip docent', 'Equipo docente', 'Teaching team'], bio: ['Llicenciada en Dret per una universitat pública catalana. Mossa d\'Esquadra des de 2009.', 'Licenciada en Derecho por una universidad pública catalana. Mossa d\'Esquadra desde 2009.', 'Law graduate from a Catalan public university. Mossos d\'Esquadra officer since 2009.'], tags: [['Temari jurídic', 'Temario jurídico', 'Legal syllabus'], ['Entrevista', 'Entrevista', 'Interview'], ['Experiència al cos', 'Experiencia en el cuerpo', 'Police experience']] }];
+const TEAM = [{ name: 'Carmen Entrena', role: ['Equip docent · Creadora de Sentinella', 'Equipo docente · Creadora de Sentinella', 'Teaching team · Creator of Sentinella'], bio: ['Llicenciada en Dret per una universitat pública catalana. Mossa d\'Esquadra des de 2009.', 'Licenciada en Derecho por una universidad pública catalana. Mossa d\'Esquadra desde 2009.', 'Law graduate from a Catalan public university. Mossos d\'Esquadra officer since 2009.'], tags: [['Temari jurídic', 'Temario jurídico', 'Legal syllabus'], ['Entrevista', 'Entrevista', 'Interview'], ['Experiència al cos', 'Experiencia en el cuerpo', 'Police experience']] }];
 const teamCard = (m, compact = false) => `<div class="team ${compact ? 'compact' : ''}"><div class="team-av">${esc(m.name[0])}</div><div><span class="kicker">${L(m.role)}</span><h3>${esc(m.name)}</h3><p>${L(m.bio)}</p>${compact ? '' : `<div class="chips">${m.tags.map((x) => `<span class="chip">${L(x)}</span>`).join('')}</div>`}</div></div>`;
 
 // ═════════ LANDING ═════════
@@ -138,8 +141,8 @@ function landing() {
     <section class="sec phases reveal"><h2>${t('phases_t')}</h2><p class="muted">${t('phases_s')}</p><ol class="ph-list">${phases}</ol></section>
     <section class="sec alpha-sec reveal"><img class="alpha-big" src="assets/alpha.png" alt="Formacions Alpha" loading="lazy"><div><span class="kicker">by Formacions Alpha</span><h2>${t('alpha_t')}</h2><p class="muted">${t('alpha_d')}</p><a class="btn glass" href="https://oposicionsalpha.com/" target="_blank" rel="noopener">oposicionsalpha.com ${icon('arrow', 16)}</a></div></section>
     <section class="sec reveal"><h2>${L(['L\'equip docent', 'El equipo docente', 'Teaching team'])}</h2>${TEAM.map((m) => teamCard(m)).join('')}</section>
-    <section class="sec cta-final reveal"><h2>${L(['Cap a la plaça.', 'Rumbo a la plaza.', 'Go get your badge.'])}</h2><div class="cta-row center"><a class="btn primary lg" href="#/register">${t('cta_register')}</a><button class="btn glass lg" data-act="demo">${t('cta_demo')}</button></div></section>
-    <footer class="foot"><p>${t('disclaimer')}</p><p class="muted">© ${new Date().getFullYear()} ${BRAND} by Formacions Alpha · Mollet del Vallès</p></footer>
+    <section class="sec cta-final reveal"><h2>${L(['Cap a la plaça.', 'Rumbo a la plaza.', 'Go get your badge.'])}</h2><div class="cta-row center"><a class="btn primary lg" href="#/register">${t('cta_register')}</a><button class="btn glass lg" data-act="demo">${t('cta_demo')}</button><button class="btn glass lg" data-act="demo-doc">${icon('users', 16)} ${t('cta_demo_doc')}</button></div></section>
+    <footer class="foot"><p>${t('disclaimer')}</p><p class="credit-foot">${t('credit')}</p><p class="muted">© ${new Date().getFullYear()} ${BRAND} by Formacions Alpha · Mollet del Vallès</p></footer>
   </div>`,
   mount() {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.15 });
@@ -166,8 +169,10 @@ function authView(kind) {
         <button class="btn primary block lg" type="submit">${reg ? t('cta_register') : t('start')} ${icon('arrow', 18)}</button>
       </form>
       <button class="btn glass block" data-act="demo">${icon('play', 16)} ${t('cta_demo')}</button>
+      <button class="btn ghost block" data-act="demo-doc">${icon('users', 16)} ${t('cta_demo_doc')}</button>
       <p class="muted center">${reg ? t('have_account') : t('no_account')} <a href="#/${reg ? 'login' : 'register'}">${reg ? t('cta_login') : t('cta_register')}</a></p>
-      <p class="note">${icon('lock', 14)} ${t('local_note')}</p>
+      <p class="note">${icon(store.cloud() ? 'cloud' : 'lock', 14)} ${t(store.cloud() ? 'cloud_note' : 'local_note')}</p>
+      <p class="credit center">${t('credit')}</p>
     </div>
   </div>`,
   mount() {
@@ -179,7 +184,7 @@ function authView(kind) {
         if (reg) { await store.register({ ...f, lang: getLang() }); toast(t('welcome', { name: f.name })); }
         else await store.login(f.email, f.password);
         go('#/campus');
-      } catch (x) { err.textContent = x.message === 'taken' ? t('err_taken') : t('err_login'); }
+      } catch (x) { err.textContent = x.message === 'taken' ? t('err_taken') : x.message === 'confirm' ? t('err_confirm') : x.message === 'login' ? t('err_login') : x.message; }
     });
   } };
 }
@@ -542,6 +547,79 @@ function badges(d) {
     ['b_sim', 'timer', r.some((x) => x.kind === 'sim' && x.pass)], ['b_apte', 'dumbbell', !!fm?.pass], ['b_100', 'check', d.answered >= 100], ['b_1000', 'award', d.answered >= 1000],
   ].map(([k, ic, ok]) => ({ k, icon: ic, ok, name: t(k) }));
 }
+// ═════════ PANELL DOCENT ═════════
+function studentStats(d) {
+  const r = d.results || []; const now = Date.now();
+  const avg = r.length ? r.reduce((a, x) => a + x.score, 0) / r.length : null;
+  const kr = r.filter((x) => x.kind === 'test'); const know = kr.length ? kr.reduce((a, x) => a + x.score, 0) / kr.length : null;
+  const gs = groupStats(d); let c = 0, n = 0; for (const g in gs) { c += gs[g].c; n += gs[g].n; }
+  const lastMark = d.marks?.at(-1); const fis = lastMark ? finalMark(lastMark, d.profile.sex || 'm') : null;
+  const last = r[0]?.ts || null; const idle = last ? Math.floor((now - last) / 864e5) : null;
+  const risk = [];
+  if (idle == null || idle > 7) risk.push(t('risk_idle'));
+  if (avg != null && avg < 5) risk.push(t('risk_score'));
+  if (fis && fis.pass === false) risk.push(t('risk_fis'));
+  return { d, name: d.profile.name || d.profile.email, email: d.profile.email, tests: r.length, avg, know, psico: n ? c / n : null, gs, fis, last, idle, streak: store.streak(d), studied: Object.values(d.studied || {}).filter(Boolean).length, risk, examDays: daysTo(d.profile.examDate) };
+}
+const relDay = (idle) => (idle == null ? t('doc_never') : idle === 0 ? t('today') : L([`fa ${idle} d`, `hace ${idle} d`, `${idle} d ago`]));
+let DOC_ROWS = [];
+function docent() {
+  if (!store.isDocent()) return campus();
+  return { html: `${pageHead(t('doc_t'), t('doc_s'), `<span class="chip">${icon(store.cloud() && store.me().profile.src === 'cloud' ? 'cloud' : 'lock', 14)} ${store.me().profile.src === 'cloud' ? t('doc_cloud') : t('doc_local')}</span>`)}
+    <div id="docbox"><div class="card"><p class="empty">…</p></div></div>`,
+  mount() {
+    let alive = true;
+    store.listStudents().then((list) => { if (!alive) return; DOC_ROWS = list.map(studentStats); drawDocent(); }).catch((e) => { $('#docbox').innerHTML = `<div class="card"><p class="err">${esc(e.message || e)}</p></div>`; });
+    return () => { alive = false; };
+  } };
+}
+function drawDocent(q = '', sort = 'risk') {
+  const box = $('#docbox'); if (!box) return;
+  const rows = DOC_ROWS;
+  if (!rows.length) { box.innerHTML = `<div class="card"><p class="empty">${t('doc_empty')}</p></div>`; return; }
+  const active = rows.filter((s) => s.idle != null && s.idle <= 7).length;
+  const avgs = rows.filter((s) => s.avg != null); const classAvg = avgs.length ? avgs.reduce((a, s) => a + s.avg, 0) / avgs.length : 0;
+  const withFis = rows.filter((s) => s.fis); const fisOk = withFis.filter((s) => s.fis.pass).length;
+  const agg = {}; for (const g of GROUPS) agg[g.id] = { c: 0, n: 0 }; for (const s of rows) for (const g in s.gs) { if (agg[g]) { agg[g].c += s.gs[g].c; agg[g].n += s.gs[g].n; } }
+  const risk = rows.filter((s) => s.risk.length).sort((a, b) => b.risk.length - a.risk.length);
+  const sorters = { risk: (a, b) => b.risk.length - a.risk.length || (a.avg ?? 0) - (b.avg ?? 0), name: (a, b) => a.name.localeCompare(b.name), avg: (a, b) => (b.avg ?? -1) - (a.avg ?? -1), last: (a, b) => (a.idle ?? 999) - (b.idle ?? 999) };
+  const ql = q.trim().toLowerCase();
+  const list = rows.filter((s) => !ql || s.name.toLowerCase().includes(ql) || (s.email || '').toLowerCase().includes(ql)).sort(sorters[sort]);
+  const n1 = (v) => (v == null ? '–' : fmtNum(v, 1, getLang()));
+  box.innerHTML = `
+    <div class="kpis"><div class="kpi"><small>${t('doc_students')}</small><b>${rows.length}</b></div><div class="kpi"><small>${t('doc_active')}</small><b>${active}</b></div><div class="kpi"><small>${t('avg_score')}</small><b>${n1(classAvg)}</b></div><div class="kpi"><small>${t('doc_fis_ok')}</small><b>${withFis.length ? Math.round((fisOk / withFis.length) * 100) + '%' : '–'}</b></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-h"><h3>${t('doc_class_apt')}</h3></div>${radar(GROUPS.map((g) => t('g_' + g.id)), GROUPS.map((g) => (agg[g.id].n ? agg[g.id].c / agg[g.id].n : null)), { colors: GROUPS.map((g) => g.color) })}</div>
+      <div class="card"><div class="card-h"><h3>${icon('alert', 18)} ${t('doc_risk')}</h3><span class="chip">${risk.length}</span></div>${risk.length ? `<div class="list">${risk.slice(0, 8).map((s) => `<button class="hrow rowbtn" data-st="${esc(s.d.profile.id)}"><span class="avatar sm">${esc(s.name[0] || '?')}</span><div class="hmid"><b>${esc(s.name)}</b><small>${s.risk.join(' · ')}</small></div><span class="score ${s.avg != null && s.avg >= 5 ? 'ok' : 'bad'}">${n1(s.avg)}</span></button>`).join('')}</div>` : `<p class="empty">${t('doc_risk_empty')}</p>`}</div>
+    </div>
+    <div class="card">
+      <div class="doc-tools"><label class="search">${icon('search', 16)}<input id="dq" placeholder="${t('doc_search')}" value="${esc(q)}"></label><select id="dsort">${[['risk', 'doc_sort_risk'], ['name', 'name'], ['avg', 'avg_score'], ['last', 'doc_last']].map(([k, l]) => `<option value="${k}" ${sort === k ? 'selected' : ''}>${t(l)}</option>`).join('')}</select><button class="btn glass sm" data-act="doc-csv">${icon('download', 16)} CSV</button></div>
+      <div class="table-wrap"><table class="dtable"><thead><tr><th>${t('name')}</th><th>${t('doc_last')}</th><th>${t('tests_done')}</th><th>${t('avg_score')}</th><th>${t('nav_psico')}</th><th>${t('doc_know')}</th><th>${t('nav_fis_short')}</th><th>${t('temari_t')}</th></tr></thead>
+      <tbody>${list.map((s) => `<tr data-st="${esc(s.d.profile.id)}" class="rowbtn"><td><div class="who"><span class="avatar sm">${esc(s.name[0] || '?')}</span><div><b>${esc(s.name)}</b><small>${esc(s.email || '')}</small></div></div></td><td class="${s.idle == null || s.idle > 7 ? 'bad-txt' : ''}">${relDay(s.idle)}</td><td>${s.tests}</td><td><span class="score ${s.avg != null && s.avg >= 5 ? 'ok' : 'bad'}">${n1(s.avg)}</span></td><td>${s.psico == null ? '–' : Math.round(s.psico * 100) + '%'}</td><td>${n1(s.know)}</td><td>${s.fis ? `<span class="tag ${s.fis.pass ? 'ok' : 'bad'}">${fmtNum(s.fis.avg, 1, getLang())}</span>` : '–'}</td><td>${s.studied}/${ALL_TEMES.length}</td></tr>`).join('')}</tbody></table></div>
+    </div>`;
+  $('#dq').addEventListener('input', (e) => { const pos = e.target.selectionStart; drawDocent(e.target.value, $('#dsort').value); const i = $('#dq'); i.focus(); i.setSelectionRange(pos, pos); });
+  $('#dsort').addEventListener('change', (e) => drawDocent($('#dq').value, e.target.value));
+  $$('[data-st]', box).forEach((el) => el.addEventListener('click', () => studentModal(DOC_ROWS.find((s) => s.d.profile.id === el.dataset.st))));
+}
+function studentModal(s) {
+  if (!s) return; const d = s.d;
+  const pts = d.results.slice(0, 20).reverse().map((r) => ({ x: r.ts, y: r.score, t: `${r.lk ? t(r.lk) : r.label}: ${fmtNum(r.score, 1, getLang())}` }));
+  modal(`<div class="sheet-h"><div class="who"><span class="avatar">${esc(s.name[0] || '?')}</span><div><h2>${esc(s.name)}</h2><small>${esc(s.email || '')}${s.examDays != null && s.examDays >= 0 ? ` · ${s.examDays} ${t('days')} ${t('countdown')}` : ''}</small></div></div><button class="icon-btn" data-close>${icon('x')}</button></div>
+    ${s.risk.length ? `<div class="chips risk">${s.risk.map((x) => `<span class="chip">${icon('alert', 12)} ${x}</span>`).join('')}</div>` : ''}
+    <div class="kpis k3"><div class="kpi"><small>${t('avg_score')}</small><b>${s.avg == null ? '–' : fmtNum(s.avg, 1, getLang())}</b></div><div class="kpi"><small>${t('tests_done')}</small><b>${s.tests}</b></div><div class="kpi"><small>${t('streak')}</small><b>${s.streak}</b></div></div>
+    ${radar(GROUPS.map((g) => t('g_' + g.id)), GROUPS.map((g) => (s.gs[g.id].n ? s.gs[g.id].c / s.gs[g.id].n : null)), { size: 240, colors: GROUPS.map((g) => g.color) })}
+    ${pts.length > 1 ? `<h3>${t('evolution')}</h3>${lineChart([{ color: 'var(--accent)', points: pts }], { refs: [{ y: 5, label: '5' }], height: 180 })}` : ''}
+    ${s.fis ? `<h3>${t('phys_status')}</h3><div class="rings3">${['circuit', 'press', 'navette'].map((k, i) => `<div>${ring(s.fis.ps[i] / 10, { size: 70, stroke: 8, color: ['#fcc601', '#e3352e', '#ef8834'][i], label: s.fis.ps[i] })}<small>${t('t_' + k)}</small></div>`).join('')}</div>` : ''}
+    <h3>${t('recent')}</h3><div class="list">${d.results.slice(0, 6).map(histRow).join('') || `<p class="empty">${t('no_tests')}</p>`}</div>`);
+}
+function docCsv() {
+  const head = ['nom', 'correu', 'tests', 'nota_mitjana', 'psicotecnics_pct', 'coneixements', 'fisica', 'fisica_apte', 'temes_estudiats', 'ultima_activitat', 'alertes'];
+  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = DOC_ROWS.map((s) => [s.name, s.email, s.tests, s.avg?.toFixed(2), s.psico != null ? Math.round(s.psico * 100) : '', s.know?.toFixed(2), s.fis?.avg?.toFixed(2), s.fis ? (s.fis.pass ? 'si' : 'no') : '', s.studied, s.last ? new Date(s.last).toISOString().slice(0, 10) : '', s.risk.join(' / ')].map(q).join(','));
+  const blob = new Blob(['﻿' + [head.join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sentinella-alumnes-${dayKey()}.csv`; a.click(); URL.revokeObjectURL(a.href);
+}
+
 function perfil() {
   const d = store.me(); const p = d.profile; const rk = store.rankOf(d.xp);
   return { html: `${pageHead(t('prof_t'), '')}
@@ -565,13 +643,15 @@ function perfil() {
   } };
 }
 
-const VIEWS = { '': landing, login: () => authView('login'), register: () => authView('register'), campus, psico, tests, sim, run: runView, result: resultView, temari, tema, fisic, hist, perfil };
+const VIEWS = { docent, '': landing, login: () => authView('login'), register: () => authView('register'), campus, psico, tests, sim, run: runView, result: resultView, temari, tema, fisic, hist, perfil };
 
 // ───────── Accions (delegació d'esdeveniments) ─────────
 const ACT = {
   lang: (el) => setLanguage(el.dataset.v),
   theme: toggleTheme,
-  logout: () => { store.logout(); go('#/'); },
+  logout: async () => { await store.logout(); go('#/'); },
+  'doc-csv': docCsv,
+  'demo-doc': async () => { await store.demoDocent(); toast(t('welcome', { name: t('role_docent') })); go('#/docent'); },
   demo: async () => { await store.demo(); toast(t('welcome', { name: 'Laia' })); go('#/campus'); },
   'psico-cfg': (el) => psicoCfg(el.dataset.cat),
   'quick-psico': () => startRun({ kind: 'psico', lk: 'q_psico', label: t('q_psico'), qs: genMixed(20), mode: 'train', penalty: false, limit: 0, regen: { type: 'psico', cat: 'mixed', n: 20, mode: 'train' } }),
@@ -610,7 +690,7 @@ const ACT = {
   'del-res': (el) => { if (confirm(t('confirm_del'))) { store.update((d) => { d.results = d.results.filter((x) => x.id !== el.dataset.id); }); render(); } },
   export: () => { const blob = new Blob([JSON.stringify(store.me(), null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sentinella-${dayKey()}.json`; a.click(); URL.revokeObjectURL(a.href); },
   'reset-prog': () => { if (confirm(t('confirm_del'))) { store.resetProgress(); render(); } },
-  'del-acc': () => { if (confirm(t('confirm_del'))) { store.deleteAccount(); go('#/'); } },
+  'del-acc': async () => { if (confirm(t('confirm_del'))) { await store.deleteAccount(); go('#/'); } },
   install: async () => { if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; } },
 };
 document.addEventListener('click', (e) => {
@@ -626,5 +706,4 @@ addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredIns
 if ('serviceWorker' in navigator && !['localhost', '127.0.0.1'].includes(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 // ───────── Inici ─────────
-store.restore();
-render();
+store.init().then(render, render);
