@@ -3,7 +3,7 @@
 
 export const TEMARI = [
   {
-    id: 'A', color: '#38bdf8', icon: 'globe',
+    id: 'A', color: '#fcc601', icon: 'globe',
     name: ['Coneixements de l\'entorn', 'Conocimientos del entorno', 'Knowledge of the environment'],
     temes: [
       { id: 'A1', title: ['Història de Catalunya (I): de l\'antiguitat al segle XVIII', 'Historia de Cataluña (I): de la Antigüedad al siglo XVIII', 'History of Catalonia (I): Antiquity to the 18th century'],
@@ -58,7 +58,7 @@ export const TEMARI = [
     ],
   },
   {
-    id: 'B', color: '#a78bfa', icon: 'layers',
+    id: 'B', color: '#4f8fd6', icon: 'layers',
     name: ['Àmbit institucional', 'Ámbito institucional', 'Institutional area'],
     temes: [
       { id: 'B1', title: ['L\'Estatut d\'autonomia de Catalunya', 'El Estatuto de autonomía de Cataluña', 'The Statute of Autonomy of Catalonia'],
@@ -118,7 +118,7 @@ export const TEMARI = [
     ],
   },
   {
-    id: 'C', color: '#f472b6', icon: 'shield',
+    id: 'C', color: '#e3352e', icon: 'shield',
     name: ['Seguretat i policia', 'Seguridad y policía', 'Security and policing'],
     temes: [
       { id: 'C1', title: ['Les competències de la Generalitat en seguretat', 'Las competencias de la Generalitat en seguridad', 'Generalitat powers in security'],
@@ -156,7 +156,7 @@ export const TEMARI = [
     ],
   },
   {
-    id: 'D', color: '#fbbf24', icon: 'sparkles',
+    id: 'D', color: '#ffef23', icon: 'sparkles',
     name: ['Actualitat', 'Actualidad', 'Current affairs'],
     temes: [
       { id: 'D1', title: ['Coneixement de l\'entorn polític, econòmic i social', 'Conocimiento del entorno político, económico y social', 'Political, economic and social current affairs'],

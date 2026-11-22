@@ -297,8 +297,8 @@ export const CATS = [
   { id: 'oddword', g: 'ver', icon: 'x', gen: genOddWord },
 ];
 export const GROUPS = [
-  { id: 'num', color: '#38bdf8' }, { id: 'abs', color: '#a78bfa' }, { id: 'esp', color: '#34d399' },
-  { id: 'per', color: '#fbbf24' }, { id: 'ver', color: '#f472b6' }, { id: 'mem', color: '#fb7185' },
+  { id: 'num', color: '#fcc601' }, { id: 'abs', color: '#4f8fd6' }, { id: 'esp', color: '#ef8834' },
+  { id: 'per', color: '#ffef23' }, { id: 'ver', color: '#e3352e' }, { id: 'mem', color: '#1b75ba' },
 ];
 export const catById = (id) => CATS.find((c) => c.id === id);
 

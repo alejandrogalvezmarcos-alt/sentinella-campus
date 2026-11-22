@@ -116,7 +116,7 @@ export function confetti() {
   c.width = innerWidth; c.height = innerHeight;
   document.body.appendChild(c);
   const ctx = c.getContext('2d');
-  const cols = ['#3b82f6', '#22d3ee', '#f43f5e', '#facc15', '#a78bfa', '#34d399'];
+  const cols = ['#3b82f6', '#22d3ee', '#f43f5e', '#facc15', '#4f8fd6', '#ef8834'];
   const parts = Array.from({ length: 140 }, () => ({ x: innerWidth / 2, y: innerHeight / 3, vx: (Math.random() - 0.5) * 14, vy: Math.random() * -12 - 3, s: Math.random() * 6 + 4, c: pick(cols), r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3 }));
   let f = 0;
   (function loop() {

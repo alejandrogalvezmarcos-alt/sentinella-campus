@@ -1,6 +1,6 @@
-# Sentinella · Campus Mossos
+# Sentinella by Alpha · Campus Mossos
 
-Campus web/móvil para preparar las oposiciones a **Mossos d'Esquadra** (convocatoria 46/26). Català · Castellano · English.
+Campus digital de [Formacions Alpha](https://oposicionsalpha.com/) (Mollet del Vallès) para preparar las oposiciones a **Mossos d'Esquadra** (convocatoria 46/26). Català · Castellano · English.
 
 - **Psicotécnicos infinitos**: 16 tipos generados al azar (series numéricas y de letras, cálculo, problemas, series de figuras, figura diferente, rotaciones, cubos, comparar códigos, contar símbolos, memoria de matrículas, atención, sinónimos, antónimos, analogías, palabra intrusa).
 - **Tests del temario**: preguntas de los 20 temas de la Guía de estudio, con explicación y repaso de errores.

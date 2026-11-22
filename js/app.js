@@ -47,7 +47,7 @@ addEventListener('hashchange', render);
 // ───────── Marc comú ─────────
 let LOGO_N = 0;
 const logo = (s = 34, id = `lgo${LOGO_N++}`) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><path d="M24 3 6 9v13c0 11 7.6 19.6 18 23 10.4-3.4 18-12 18-23V9z" fill="url(#${id})"/><path d="M24 12l3.2 6.6 7.2 1-5.2 5 1.3 7.2L24 28.4l-6.5 3.4 1.3-7.2-5.2-5 7.2-1z" fill="#fff"/></svg>`;
-const brand = () => `<a class="brand" href="#/">${logo()}<span><b>${BRAND}</b><small>${t('tagline')}</small></span></a>`;
+const brand = () => `<a class="brand" href="#/" aria-label="${BRAND} by Formacions Alpha"><img class="brand-logo" src="assets/alpha.png" alt="Formacions Alpha"><span><b>${BRAND}</b><small>by Alpha <em>· ${t('brand_sub')}</em></small></span></a>`;
 const langSwitch = () => `<div class="seg langs">${LANGS.map(([k]) => `<button data-act="lang" data-v="${k}" class="${getLang() === k ? 'on' : ''}">${k.toUpperCase()}</button>`).join('')}</div>`;
 const themeBtn = () => `<button class="icon-btn" data-act="theme" aria-label="${t('theme')}">${icon(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>`;
 
@@ -98,7 +98,7 @@ const teamCard = (m, compact = false) => `<div class="team ${compact ? 'compact'
 function landing() {
   const nQ = QUESTIONS.length;
   const phases = [1, 2, 3, 4, 5, 6].map((i) => `<li><span class="ph-n">${i}</span><div><b>${t('ph' + i)}</b><small>${t('ph' + i + 'd')}</small></div></li>`).join('');
-  const feats = [['brain', '#38bdf8'], ['book', '#a78bfa'], ['timer', '#f472b6'], ['run', '#34d399'], ['chart', '#fbbf24'], ['globe', '#fb7185']].map(([ic, c], i) => `<div class="feat reveal" style="--c:${c}"><div class="feat-ic">${icon(ic, 24)}</div><h3>${t(`f${i + 1}_t`)}</h3><p>${t(`f${i + 1}_d`)}</p></div>`).join('');
+  const feats = [['brain', '#fcc601'], ['book', '#4f8fd6'], ['timer', '#e3352e'], ['run', '#ef8834'], ['chart', '#ffef23'], ['globe', '#1b75ba']].map(([ic, c], i) => `<div class="feat reveal" style="--c:${c}"><div class="feat-ic">${icon(ic, 24)}</div><h3>${t(`f${i + 1}_t`)}</h3><p>${t(`f${i + 1}_d`)}</p></div>`).join('');
   const sampleFig = genQuestion('figseq');
   return { bare: true, html: `
   <div class="landing">
@@ -107,6 +107,7 @@ function landing() {
       <div class="hero-txt">
         <span class="pill">${icon('shield', 16)} ${t('hero_kicker')}</span>
         <h1>${t('hero_title')}</h1>
+        <p class="hero-sub-h">${t('hero_h2')}</p>
         <p>${t('hero_sub')}</p>
         <div class="cta-row">
           <a class="btn primary lg" href="#/register">${t('cta_register')} ${icon('arrow', 18)}</a>
@@ -125,18 +126,20 @@ function landing() {
           <div class="ph-screen">
             <div class="ph-card grad-card"><small>${t('rank')}</small><b>Caporal</b><div class="bar"><i style="width:68%"></i></div><small>${icon('flame', 14)} 12 ${t('streak')}</small></div>
             <div class="ph-card"><small>${t('c_figseq')}</small><div class="ph-figs">${sampleFig.visual}</div></div>
-            <div class="ph-row"><div class="ph-card mini">${ring(0.78, { size: 64, stroke: 7, label: '7,8' })}<small>${t('score')}</small></div><div class="ph-card mini">${ring(0.6, { size: 64, stroke: 7, color: '#34d399', label: '6,5' })}<small>${t('t_navette')}</small></div></div>
+            <div class="ph-row"><div class="ph-card mini">${ring(0.78, { size: 64, stroke: 7, label: '7,8' })}<small>${t('score')}</small></div><div class="ph-card mini">${ring(0.6, { size: 64, stroke: 7, color: '#ef8834', label: '6,5' })}<small>${t('t_navette')}</small></div></div>
           </div>
         </div>
         <div class="float f1">${icon('check', 16)} +120 XP</div>
         <div class="float f2">${icon('timer', 16)} 34:12</div>
       </div>
     </section>
+    <div class="marquee" aria-hidden="true"><div>${[0, 1].map(() => [t('nav_psico'), t('nav_temari'), t('nav_sim'), t('nav_fisic'), 'Mossos d\'Esquadra', 'Mollet del Vallès'].map((x) => `<span>${esc(x)}</span>`).join('')).join('')}</div></div>
     <section class="sec"><div class="feats">${feats}</div></section>
     <section class="sec phases reveal"><h2>${t('phases_t')}</h2><p class="muted">${t('phases_s')}</p><ol class="ph-list">${phases}</ol></section>
+    <section class="sec alpha-sec reveal"><img class="alpha-big" src="assets/alpha.png" alt="Formacions Alpha" loading="lazy"><div><span class="kicker">by Formacions Alpha</span><h2>${t('alpha_t')}</h2><p class="muted">${t('alpha_d')}</p><a class="btn glass" href="https://oposicionsalpha.com/" target="_blank" rel="noopener">oposicionsalpha.com ${icon('arrow', 16)}</a></div></section>
     <section class="sec reveal"><h2>${L(['L\'equip docent', 'El equipo docente', 'Teaching team'])}</h2>${TEAM.map((m) => teamCard(m)).join('')}</section>
-    <section class="sec cta-final reveal"><h2>${L(['Comença avui. La plaça no espera.', 'Empieza hoy. La plaza no espera.', 'Start today. The position won\'t wait.'])}</h2><div class="cta-row center"><a class="btn primary lg" href="#/register">${t('cta_register')}</a><button class="btn glass lg" data-act="demo">${t('cta_demo')}</button></div></section>
-    <footer class="foot"><p>${t('disclaimer')}</p><p class="muted">© ${new Date().getFullYear()} ${BRAND}</p></footer>
+    <section class="sec cta-final reveal"><h2>${L(['Cap a la plaça.', 'Rumbo a la plaza.', 'Go get your badge.'])}</h2><div class="cta-row center"><a class="btn primary lg" href="#/register">${t('cta_register')}</a><button class="btn glass lg" data-act="demo">${t('cta_demo')}</button></div></section>
+    <footer class="foot"><p>${t('disclaimer')}</p><p class="muted">© ${new Date().getFullYear()} ${BRAND} by Formacions Alpha · Mollet del Vallès</p></footer>
   </div>`,
   mount() {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.15 });
@@ -150,7 +153,7 @@ function authView(kind) {
   const reg = kind === 'register';
   return { bare: true, html: `
   <div class="auth">
-    <div class="auth-side"><div>${brand()}<h2>${t('hero_title')}</h2><p>${t('hero_sub')}</p></div><div class="auth-art">${ring(0.82, { size: 150, stroke: 14, label: '8,2', sub: t('score') })}</div></div>
+    <div class="auth-side"><div>${brand()}<h2>${t('hero_title')}</h2><p>${t('hero_sub')}</p></div><img class="alpha-big" src="assets/alpha.png" alt="Formacions Alpha"></div>
     <div class="auth-box">
       <div class="auth-top">${langSwitch()}${themeBtn()}</div>
       <h1>${reg ? t('register_t') : t('login_t')}</h1>
@@ -200,7 +203,7 @@ function campus() {
   const todayIdx = (new Date().getDay() + 6) % 7;
   let today = null;
   if (d.plan) { const w = Math.min(d.plan.weeks.length - 1, Math.floor((Date.now() - d.plan.created) / (7 * 864e5))); today = { w, s: d.plan.weeks[w].sessions[todayIdx] }; }
-  const quick = [['q_psico', 'brain', '#38bdf8', 'quick-psico'], ['q_test', 'book', '#a78bfa', 'quick-test'], ['q_sim', 'timer', '#f472b6', 'go-sim'], ['q_navette', 'run', '#34d399', 'go-navette']];
+  const quick = [['q_psico', 'brain', '#fcc601', 'quick-psico'], ['q_test', 'book', '#4f8fd6', 'quick-test'], ['q_sim', 'timer', '#e3352e', 'go-sim'], ['q_navette', 'run', '#ef8834', 'go-navette']];
   const pts = res.slice(0, 20).reverse().map((r) => ({ x: r.ts, y: r.score, t: `${r.label}: ${fmtNum(r.score, 1, getLang())}` }));
   return { html: `
     <section class="hello grad-card">
@@ -235,7 +238,7 @@ function campus() {
       </div>
       <div class="card">
         <div class="card-h"><h3>${t('phys_status')}</h3><a href="#/fisic" class="small-link">${t('nav_fisic')} ${icon('arrow', 14)}</a></div>
-        ${fm ? `<div class="rings3">${['circuit', 'press', 'navette'].map((k, i) => `<div>${ring(fm.ps[i] / 10, { size: 84, stroke: 9, color: ['#38bdf8', '#f472b6', '#34d399'][i], label: fm.ps[i] })}<small>${t('t_' + k)}</small></div>`).join('')}</div><div class="final-row"><span>${t('final_mark')}: <b>${fmtNum(fm.avg, 2, getLang())}</b></span><span class="tag ${fm.pass ? 'ok' : 'bad'}">${fm.pass ? t('pass') : t('fail')}</span></div>` : `<p class="empty">${t('phys_empty')}</p><a class="btn sm primary" href="#/fisic">${t('tab_calc')}</a>`}
+        ${fm ? `<div class="rings3">${['circuit', 'press', 'navette'].map((k, i) => `<div>${ring(fm.ps[i] / 10, { size: 84, stroke: 9, color: ['#fcc601', '#e3352e', '#ef8834'][i], label: fm.ps[i] })}<small>${t('t_' + k)}</small></div>`).join('')}</div><div class="final-row"><span>${t('final_mark')}: <b>${fmtNum(fm.avg, 2, getLang())}</b></span><span class="tag ${fm.pass ? 'ok' : 'bad'}">${fm.pass ? t('pass') : t('fail')}</span></div>` : `<p class="empty">${t('phys_empty')}</p><a class="btn sm primary" href="#/fisic">${t('tab_calc')}</a>`}
       </div>
       <div class="card">
         <div class="card-h"><h3>${t('today_train')}</h3><span class="chip">${dayName(todayIdx)}</span></div>
@@ -300,9 +303,9 @@ function tests() {
   const byTema = {}; for (const q of QUESTIONS) byTema[q.tema] = (byTema[q.tema] || 0) + 1;
   return { html: `${pageHead(t('tests_t'), t('tests_s'))}
     <div class="quick">
-      <button class="qcard" style="--c:#f472b6" data-act="ktest" data-k="official"><span class="qic">${icon('timer', 24)}</span><b>${t('official_test')}</b><small>${t('official_test_d')}</small>${icon('arrow', 18, 'qarrow')}</button>
-      <button class="qcard" style="--c:#38bdf8" data-act="ktest" data-k="random"><span class="qic">${icon('refresh', 24)}</span><b>${t('random_test')}</b><small>${t('random_test_d')}</small>${icon('arrow', 18, 'qarrow')}</button>
-      <button class="qcard" style="--c:#fb7185" data-act="ktest" data-k="mistakes"><span class="qic">${icon('flag', 24)}</span><b>${t('mistakes')}</b><small>${mist ? t('mistakes_d', { n: mist }) : t('mistakes_empty')}</small>${icon('arrow', 18, 'qarrow')}</button>
+      <button class="qcard" style="--c:#e3352e" data-act="ktest" data-k="official"><span class="qic">${icon('timer', 24)}</span><b>${t('official_test')}</b><small>${t('official_test_d')}</small>${icon('arrow', 18, 'qarrow')}</button>
+      <button class="qcard" style="--c:#fcc601" data-act="ktest" data-k="random"><span class="qic">${icon('refresh', 24)}</span><b>${t('random_test')}</b><small>${t('random_test_d')}</small>${icon('arrow', 18, 'qarrow')}</button>
+      <button class="qcard" style="--c:#1b75ba" data-act="ktest" data-k="mistakes"><span class="qic">${icon('flag', 24)}</span><b>${t('mistakes')}</b><small>${mist ? t('mistakes_d', { n: mist }) : t('mistakes_empty')}</small>${icon('arrow', 18, 'qarrow')}</button>
     </div>
     ${TEMARI.filter((a) => a.id !== 'D').map((a) => `<section class="grp"><div class="grp-h"><span class="dot" style="background:${a.color}"></span><h2>${t('ambit')} ${a.id} · ${L(a.name)}</h2><button class="chip btnchip" data-act="ktest" data-k="ambit" data-a="${a.id}">${icon('play', 12)} ${t('all')}</button></div>
       <div class="temes">${a.temes.map((tm) => `<button class="tema-card" style="--c:${a.color}" data-act="ktest" data-k="tema" data-a="${tm.id}"><span class="tnum">${tm.id}</span><b>${L(tm.title)}</b><small>${t('n_q_bank', { n: byTema[tm.id] || 0 })}</small></button>`).join('')}</div></section>`).join('')}` };
@@ -442,7 +445,7 @@ function fisic(r) {
   const head = `${pageHead(t('fis_t'), t('fis_s'), `<div class="seg">${['m', 'f'].map((s) => `<a href="#/fisic?tab=${tab}&sex=${s}" class="${sex === s ? 'on' : ''}">${t(s === 'm' ? 'male' : 'female')}</a>`).join('')}</div>`)}
     <div class="tabs">${tabs.map((k) => `<a href="#/fisic?tab=${k}&sex=${sex}" class="${tab === k ? 'on' : ''}">${t('tab_' + k)}</a>`).join('')}</div>`;
   const ld = LOAD[sex]; const last = d.marks.at(-1) || {};
-  const tests3 = [['circuit', 'u_sec', 0.1, 'circuit_d', { kg: ld.sack }, '#38bdf8'], ['press', 'u_reps', 1, 'press_d', { kg: ld.press }, '#f472b6'], ['navette', 'u_pal', 0.5, 'navette_d', {}, '#34d399']];
+  const tests3 = [['circuit', 'u_sec', 0.1, 'circuit_d', { kg: ld.sack }, '#fcc601'], ['press', 'u_reps', 1, 'press_d', { kg: ld.press }, '#e3352e'], ['navette', 'u_pal', 0.5, 'navette_d', {}, '#ef8834']];
   let body = '', mount = null;
   if (tab === 'calc') {
     body = `<div class="calc">${tests3.map(([k, u, step, dk, vars, c]) => `<div class="card ptest" style="--c:${c}"><div class="ptest-h"><span class="qic">${icon(k === 'navette' ? 'run' : k === 'press' ? 'dumbbell' : 'bolt', 22)}</span><div><h3>${t('t_' + k)}</h3><small>${t(dk, vars)}</small></div></div><label class="big-input"><input type="number" inputmode="decimal" step="${step}" min="0" data-mark="${k}" value="${last[k] ?? ''}" placeholder="–"><span>${t(u)}</span></label><div class="pts" id="pt-${k}"></div></div>`).join('')}</div>
@@ -465,13 +468,13 @@ function fisic(r) {
     mount = () => { $$('[data-done]').forEach((c) => c.addEventListener('change', () => { store.update((d2) => { d2.planDone[c.dataset.done] = c.checked; }); if (c.checked) toast('+1 💪'); })); };
   } else if (tab === 'tools') {
     body = `<div class="tools">
-      <div class="card tool" id="tnav"><div class="tool-h"><span class="qic" style="--c:#34d399">${icon('run', 22)}</span><div><h3>${t('tool_navette')}</h3><small>${t('tool_navette_d')}</small></div></div>
+      <div class="card tool" id="tnav"><div class="tool-h"><span class="qic" style="--c:#ef8834">${icon('run', 22)}</span><div><h3>${t('tool_navette')}</h3><small>${t('tool_navette_d')}</small></div></div>
         <div class="nav-disp"><div class="nav-big"><small>${t('palier')}</small><b id="nv-pal">0</b></div><div class="nav-stats"><div><small>${t('speed')}</small><b id="nv-spd">8,5 km/h</b></div><div><small>${t('shuttle')}</small><b id="nv-sh">0/7</b></div></div><div class="nav-track"><i id="nv-runner"></i></div><div class="nav-count" id="nv-cd"></div></div>
         <div class="cta-row"><button class="btn primary" id="nv-go">${icon('play', 16)} ${t('start')}</button><button class="btn ghost" id="nv-stop" disabled>${icon('pause', 16)} ${t('stop')}</button><button class="btn glass" id="nv-save" disabled>${t('save_result')}</button></div><p class="note">${icon('volume', 14)} ${t('sound_on')}</p></div>
-      <div class="card tool"><div class="tool-h"><span class="qic" style="--c:#f472b6">${icon('dumbbell', 22)}</span><div><h3>${t('tool_press')}</h3><small>${t('tool_press_d')} (${ld.press} kg)</small></div></div>
+      <div class="card tool"><div class="tool-h"><span class="qic" style="--c:#e3352e">${icon('dumbbell', 22)}</span><div><h3>${t('tool_press')}</h3><small>${t('tool_press_d')} (${ld.press} kg)</small></div></div>
         <button class="tap" id="pr-tap" disabled><b id="pr-n">0</b><small>${t('reps')}</small></button><div class="pr-time" id="pr-t">00:45</div>
         <div class="cta-row"><button class="btn primary" id="pr-go">${icon('play', 16)} ${t('start')}</button><button class="btn ghost" id="pr-reset">${t('reset')}</button><button class="btn glass" id="pr-save" disabled>${t('save_result')}</button></div></div>
-      <div class="card tool"><div class="tool-h"><span class="qic" style="--c:#38bdf8">${icon('timer', 22)}</span><div><h3>${t('tool_chrono')}</h3><small>${t('tool_chrono_d')}</small></div></div>
+      <div class="card tool"><div class="tool-h"><span class="qic" style="--c:#fcc601">${icon('timer', 22)}</span><div><h3>${t('tool_chrono')}</h3><small>${t('tool_chrono_d')}</small></div></div>
         <div class="chrono" id="ch-t">0,0</div><div class="cta-row"><button class="btn primary" id="ch-go">${icon('play', 16)} ${t('start')}</button><button class="btn ghost" id="ch-reset">${t('reset')}</button></div><ol class="laps" id="ch-laps"></ol></div>
     </div>`;
     mount = () => mountTools(sex);
