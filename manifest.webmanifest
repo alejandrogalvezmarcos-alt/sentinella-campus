@@ -1,0 +1,13 @@
+{
+  "name": "Sentinella · Campus Mossos",
+  "short_name": "Sentinella",
+  "description": "Psicotècnics, temari, simulacres i proves físiques per a les oposicions a Mossos d'Esquadra.",
+  "start_url": "./#/campus",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070b16",
+  "theme_color": "#070b16",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
